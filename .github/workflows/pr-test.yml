@@ -395,6 +395,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          huggingface-cli download nvidia/DeepSeek-R1-FP4
           MODE_BLACKWELL=1 bash scripts/ci_install_dependency.sh
 
       - name: Run test
