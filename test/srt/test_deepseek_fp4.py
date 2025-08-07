@@ -1,18 +1,21 @@
 import unittest
+from types import SimpleNamespace
 
+from sglang.test.few_shot_gsm8k import run_eval as run_eval_few_shot_gsm8k
 from sglang.test.test_utils import (
-    popen_launch_server,
-    kill_process_tree,
     DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
     DEFAULT_URL_FOR_TEST,
+    kill_process_tree,
+    popen_launch_server,
 )
-from sglang.test.few_shot_gsm8k import run_eval as run_eval_few_shot_gsm8k
-from types import SimpleNamespace
+
+DEEPSEEK_FP4_MODEL_NAME = "nvidia/DeepSeek-R1-FP4"
+
 
 class TestFlashinferCutlassMoe(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.model = "nvidia/DeepSeek-R1-0528-FP4"
+        cls.model = DEEPSEEK_FP4_MODEL_NAME
         cls.base_url = DEFAULT_URL_FOR_TEST
         other_args = [
             "--trust-remote-code",
@@ -50,10 +53,11 @@ class TestFlashinferCutlassMoe(unittest.TestCase):
 
         self.assertGreater(metrics["accuracy"], 0.60)
 
+
 class TestFlashinferTrtllmMoe(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.model = "nvidia/DeepSeek-R1-0528-FP4"
+        cls.model = DEEPSEEK_FP4_MODEL_NAME
         cls.base_url = DEFAULT_URL_FOR_TEST
         other_args = [
             "--trust-remote-code",
@@ -88,6 +92,7 @@ class TestFlashinferTrtllmMoe(unittest.TestCase):
         print(metrics)
 
         self.assertGreater(metrics["accuracy"], 0.60)
+
 
 if __name__ == "__main__":
     unittest.main()

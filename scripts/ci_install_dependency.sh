@@ -24,12 +24,25 @@ if [ "$MODE_BLACKWELL" != "1" ]; then
 fi
 
 # Clean up existing installations
-pip uninstall -y flashinfer flashinfer_python sgl-kernel sglang vllm --break-system-packages || true
-pip cache purge || true
-rm -rf /root/.cache/flashinfer
-# TODO handle other python versions
-rm -rf /usr/local/lib/python3.10/dist-packages/flashinfer*
-rm -rf /usr/local/lib/python3.10/dist-packages/sgl_kernel*
+pip uninstall -y sglang vllm --break-system-packages || true
+
+# Check if sgl-kernel needs to be uninstalled
+if pip show sgl-kernel >/dev/null 2>&1; then
+    INSTALLED_VERSION=$(pip show sgl-kernel | grep Version | cut -d ' ' -f 2)
+    EXPECTED_VERSION=$(grep 'sgl-kernel==' python/pyproject.toml | sed 's/.*sgl-kernel==\([^"]*\).*/\1/')
+    if [ "$INSTALLED_VERSION" = "$EXPECTED_VERSION" ]; then
+        echo "sgl-kernel is already at version $EXPECTED_VERSION, skipping uninstall"
+    else
+        pip uninstall -y flashinfer flashinfer_python sgl-kernel --break-system-packages || true
+        pip cache purge || true
+        rm -rf /root/.cache/flashinfer
+        # TODO handle other python versions
+        rm -rf /usr/local/lib/python3.10/dist-packages/flashinfer*
+        rm -rf /usr/local/lib/python3.10/dist-packages/sgl_kernel*
+    fi
+else
+    echo "sgl-kernel not installed, will be installed"
+fi
 
 # Install the main package
 pip install -e "python[dev]" --extra-index-url https://download.pytorch.org/whl/${CU_VERSION} --break-system-packages
