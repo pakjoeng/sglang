@@ -380,7 +380,7 @@ jobs:
           cd test/srt
           python3 run_suite.py --suite per-commit-8-gpu-deepep
 
-unit-test-backend-8-gpu-b200:
+  unit-test-backend-8-gpu-b200:
     # needs: [check-changes, unit-test-frontend, unit-test-backend-2-gpu]
     if: (github.repository == 'sgl-project/sglang' || github.event_name == 'pull_request') &&
       github.event.pull_request.draft == false &&
@@ -402,7 +402,7 @@ unit-test-backend-8-gpu-b200:
           cd test/srt
           python3 run_suite.py --suite per-commit-8-gpu-b200 --auto-partition-id 0 --auto-partition-size 1
 
-pr-test-finish:
+  pr-test-finish:
     needs: [
       check-changes,
       unit-test-frontend, unit-test-backend-1-gpu, unit-test-backend-2-gpu, unit-test-backend-4-gpu,
@@ -423,4 +423,3 @@ pr-test-finish:
           done
           echo "All jobs completed successfully"
           exit 0
-
